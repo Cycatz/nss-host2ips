@@ -1,13 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <nss.h>
-#include <netdb.h>
-#include <error.h>
-#include <dlfcn.h>
-#include <arpa/inet.h>
+#include "libnss_fallback.h"
 
 enum nss_status
-_nss_myfiles_gethostbyname_r (const char *name,
+_nss_fallback_gethostbyname_r (const char *name,
                                 struct hostent *result_buf,
                                 char *buf,
                                 size_t buflen,
@@ -19,7 +13,7 @@ _nss_myfiles_gethostbyname_r (const char *name,
 
 
 enum nss_status
-_nss_myfiles_gethostbyname2_r (const char *name, 
+_nss_fallback_gethostbyname2_r (const char *name, 
                                 int af,
                                 struct hostent *ret,
                                 char *buf,

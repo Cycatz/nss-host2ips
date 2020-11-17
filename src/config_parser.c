@@ -1,62 +1,4 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <string.h>
-#include <arpa/inet.h>
-
-#define my_malloc(x, size, ret)     \
-    do {                            \
-        (x) = malloc((size));       \
-        if ((x) == NULL) {          \
-            perror("malloc");       \
-            return (ret);           \
-        }                           \
-    } while (0)
-
-#define my_malloc_exit(x, size)         \
-    do {                                \
-        (x) = malloc((size));           \
-        if ((x) == NULL) {              \
-            perror("malloc");           \
-            exit(EXIT_FAILURE);         \
-        }                               \
-    } while (0)
-
-
-#define MAX_LINE_SIZE 128
-
-typedef struct HOST_INFO_ELE {
-    char                 *if_name;
-    struct in_addr        if_addr;  
-    struct in_addr        addr;  
-    struct HOST_INFO_ELE *info_next; 
-} HOST_INFO ;
-
-typedef struct HOST_ELE {
-    char      *name;
-    HOST_INFO *info_head, *info_tail;    
-    struct HOST_ELE *host_next;
-} HOST;
-
-typedef struct {
-    HOST *host_head, *host_tail;
-} HOST_LIST;
-
-int is_valid_line(char *);
-
-int initialize_host_list(HOST_LIST **); 
-int free_host_list(HOST_LIST *); 
-int print_host_list(HOST_LIST *);
-
-int add_new_host(HOST_LIST *, HOST *); 
-int add_new_host_info(HOST *, HOST_INFO *); 
-
-int parse_config_file(const char *, HOST_LIST *);
-int parse_host_name(char *, HOST *);
-int parse_host_info(char *, HOST_INFO *);
+#include "config_parser.h"
 
 int is_valid_line(char *s) 
 {
@@ -141,12 +83,8 @@ int add_new_host_info(HOST *host, HOST_INFO *host_info)
 
 int parse_host_name(char *line, HOST *host) 
 {
-    char *_host_str = strtok(line, " \t");  
-    char *name = strtok(NULL, " \t");
-
-    my_malloc(host->name, strlen(name) + 1, 1); 
-    strncpy(host->name, name, strlen(name) + 1);
-
+    my_malloc(host->name, strlen(line) + 1 - 5, 1); 
+    strncpy(host->name, line + 5, strlen(line) + 1 - 5);
     return 0;
 }
 
@@ -170,7 +108,7 @@ int parse_host_info(char *info, HOST_INFO *host_info)
     
     if_name = strtok(NULL, " \t");
     my_malloc(host_info->if_name, strlen(if_name) + 1, 1);
-    strncpy(host_info->if_name, if_name, strlen(if_name) + 1);
+    strncpy(host_info->if_name, if_name, strlen(if_name));
 
     if_addr_str = strtok(NULL, " \t");
     s = inet_pton(AF_INET, if_addr_str, &(host_info->if_addr));
@@ -242,7 +180,7 @@ int print_host_list(HOST_LIST *host_list)
     return 0;
 }
 
-int main()
+void parsing_test() 
 {
     HOST_LIST *host_list;
     initialize_host_list(&host_list);
