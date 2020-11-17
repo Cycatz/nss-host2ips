@@ -1,7 +1,7 @@
-#include "libnss_fallback.h"
+#include "libnss_host2ips.h"
 
 enum nss_status
-_nss_fallback_gethostbyname_r (const char *name,
+_nss_host2ips_gethostbyname_r (const char *name,
                                 struct hostent *result_buf,
                                 char *buf,
                                 size_t buflen,
@@ -13,7 +13,7 @@ _nss_fallback_gethostbyname_r (const char *name,
 
 
 enum nss_status
-_nss_fallback_gethostbyname2_r (const char *name, 
+_nss_host2ips_gethostbyname2_r (const char *name, 
                                 int af,
                                 struct hostent *ret,
                                 char *buf,

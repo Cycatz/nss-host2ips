@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -fPIC -Wall -Wextra -Wstrict-prototypes -O2 -std=c99
 LD_FLAGS= -shared -Wl,-soname,
 
-NSS_MODULE_NAME = fallback
+NSS_MODULE_NAME = host2ips
 NSS_LIB_NAME = libnss_$(NSS_MODULE_NAME)
 SONAME = $(NSS_LIB_NAME).so.2
 REAL_NAME = $(NSS_LIB_NAME)-2.31.so
