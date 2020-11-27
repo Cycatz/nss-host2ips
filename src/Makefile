@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -fPIC -Wall -Wextra -Wstrict-prototypes -O2 -std=c99
-LD_FLAGS= -shared -Wl,-soname,
+CFLAGS = -fPIC -Wall -Wextra -Wstrict-prototypes -O2 -std=gnu99
+LD_FLAGS= -pthread -shared -Wl,-soname,
 
 NSS_MODULE_NAME = host2ips
 NSS_LIB_NAME = libnss_$(NSS_MODULE_NAME)
