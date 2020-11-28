@@ -17,21 +17,6 @@ static int  nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *, NSS_HOST2IPS_Hos
 static int  nss_host2ips_parse_host_name(char *, NSS_HOST2IPS_Host*);
 static int  nss_host2ips_parse_host_info(char *, NSS_HOST2IPS_HostInfo *);
 static int  nss_host2ips_print_host_list(NSS_HOST2IPS_HostList *);
-static void nss_host2ips_parsing_test(void);
-
-static int nss_host2ips_is_valid_line(char *s)
-{
-    char *l = s;
-
-    if (!l || *l == '#')
-        return 1;
-    while (*l != '\n') {
-        if (!isspace(*l++)) {
-            return 0;
-        }
-    }
-    return 1;
-}
 
 int nss_host2ips_initialize_host_list(NSS_HOST2IPS_HostList **host_list)
 {
@@ -67,6 +52,29 @@ int nss_host2ips_free_host_list(NSS_HOST2IPS_HostList *host_list)
     }
     free(host_list);
 
+    return 1;
+}
+
+void nss_host2ips_parsing_test()
+{
+    NSS_HOST2IPS_HostList *host_list;
+    nss_host2ips_initialize_host_list(&host_list);
+    nss_host2ips_parse_config_file("./example1.syntax", host_list);
+    nss_host2ips_print_host_list(host_list);
+    nss_host2ips_free_host_list(host_list);
+}
+
+static int nss_host2ips_is_valid_line(char *s)
+{
+    char *l = s;
+
+    if (!l || *l == '#')
+        return 1;
+    while (*l != '\n') {
+        if (!isspace(*l++)) {
+            return 0;
+        }
+    }
     return 1;
 }
 
@@ -203,11 +211,3 @@ static int nss_host2ips_print_host_list(NSS_HOST2IPS_HostList *host_list)
     return 1;
 }
 
-static void nss_host2ips_parsing_test()
-{
-    NSS_HOST2IPS_HostList *host_list;
-    nss_host2ips_initialize_host_list(&host_list);
-    nss_host2ips_parse_config_file("./example1.syntax", host_list);
-    nss_host2ips_print_host_list(host_list);
-    nss_host2ips_free_host_list(host_list);
-}
