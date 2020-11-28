@@ -86,17 +86,17 @@ enum nss_status _nss_host2ips_endhostent(void)
 }
 
 
-enum nss_status _nss_host2ips_gethostbyname_r(const char *name,
-                                              struct hostent *result_buf,
-                                              char *buf,
-                                              size_t buflen,
-                                              int *errnop,
-                                              int *h_errnop)
+enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
+                                               int af,  
+                                               struct hostent *result_buf,
+                                               char *buf,
+                                               size_t buflen,
+                                               int *errnop,
+                                               int *h_errnop)
 {
     enum nss_status ret = NSS_STATUS_SUCCESS;
     int len_hostname = strlen(name);
     NSS_HOST2IPS_Host *host;
-    NSS_HOST2IPS_HostInfo *host_info;
     struct in_addr addr;
     char *host_name, *addr_ptr;
 
@@ -152,13 +152,12 @@ enum nss_status _nss_host2ips_gethostbyname_r(const char *name,
 }
 
 
-enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
-                                               int af,
+enum nss_status _nss_host2ips_gethostbyname_r (const char *name,
                                                struct hostent *ret,
                                                char *buf,
                                                size_t buflen,
-                                               struct hostent **result,
+                                               int *errnop, 
                                                int *h_errnop)
 {
-    return NSS_STATUS_SUCCESS;
+    return _nss_host2ips_gethostbyname2_r(name, AF_UNSPEC, ret, buf, buflen, errnop, h_errnop); 
 }
