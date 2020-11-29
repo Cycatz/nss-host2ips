@@ -1,11 +1,12 @@
 #include "host2ips-parser.h"
 
-static void list_configs(void); 
-static void list_configs(void)
+void list_configs(const char *config_file_name)
 {
     NSS_HOST2IPS_HostList *host_list;
     nss_host2ips_initialize_host_list(&host_list);
-    nss_host2ips_parse_config_file(NSS_HOST2IPS_TEST_CONFIG_FILE_NAME, host_list);
+    // nss_host2ips_parse_config_file(NSS_HOST2IPS_TEST_CONFIG_FILE_NAME,
+    // host_list);
+    nss_host2ips_parse_config_file(config_file_name, host_list);
 
     NSS_HOST2IPS_Host *host = host_list->host_head;
     NSS_HOST2IPS_HostInfo *host_info;
@@ -27,9 +28,4 @@ static void list_configs(void)
     }
 
     nss_host2ips_free_host_list(host_list);
-}
-
-int main() 
-{
-    list_configs();
 }

@@ -32,8 +32,8 @@
 
 static void init_dl_handle(void);
 static void *load_func(const char *);
-static int test_nss_host2ips_gethostbyname(void);
-// static int test_nss_host2ips_gethostbyname2()
+static int test_nss_host2ips_gethostbyname(const char *);
+// int test_nss_host2ips_gethostbyname2(const char *);
 static void close_dl_handle(void);
 
 
@@ -67,13 +67,12 @@ static void *load_func(const char *func_name)
     return func;
 }
 
-static int test_nss_host2ips_gethostbyname(void)
+static int test_nss_host2ips_gethostbyname(const char *host_name)
 {
     enum nss_status (*nss_host2ips_gethostbyname)(
         const char *, struct hostent *, char *, size_t, int *, int *);
     enum nss_status nss_ret;
 
-    const char *host_name = "foo.bar";
     struct hostent *hostbuf;
     size_t hstbuflen;
     char *tmphstbuf;
@@ -130,11 +129,4 @@ static void close_dl_handle(void)
         fprintf(stderr, "%s\n", dlerror());
         exit(EXIT_FAILURE);
     }
-}
-
-int main()
-{
-    init_dl_handle();
-    test_nss_host2ips_gethostbyname();
-    close_dl_handle();
 }
