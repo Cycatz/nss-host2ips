@@ -11,6 +11,7 @@ static int nss_host2ips_is_reachable_with_ping(struct in_addr addr)
 {
     FILE *in;
     char command[512];
+    char buf[512];
     char *addr_str = NULL;
     int exit_code;
 
@@ -18,14 +19,16 @@ static int nss_host2ips_is_reachable_with_ping(struct in_addr addr)
         return -1;
     }
 
-    snprintf(command, sizeof(command), "ping -c 1 %s 2>/dev/null", addr_str);
+    snprintf(command, sizeof(command), "ping -q -c 1 -w 1 %s 2>/dev/null", addr_str);
 
     if (!(in = popen(command, "r"))) {
         return -1;
     }
 
-    exit_code = pclose(in);
+    // must add this line to get output    
+    while (fgets(buf, sizeof(buf), in) != NULL);
 
+    exit_code = pclose(in);
     return exit_code;
 }
 
@@ -37,8 +40,7 @@ static int nss_host2ips_is_rule_matched(NSS_HOST2IPS_HostInfo *host_info, struct
             return 1;
         }
     }
-
-    return -1;
+    return 0;
 }
 
 
@@ -121,10 +123,11 @@ enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
                         char *, 3) > buf + buflen) {
                     *errnop = ERANGE;
                     *h_errnop = NO_RECOVERY;
+
                     return NSS_STATUS_TRYAGAIN;
                 }
-
                 strncpy(buf, name, len_hostname);
+
                 host_name = buf;
                 buf = NSS_HOST2IPS_ALIGN(buf + len_hostname + 1, addr);
                 *((struct in_addr *) buf) = addr;
@@ -141,6 +144,8 @@ enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
                 result_buf->h_length = sizeof(addr);
                 result_buf->h_addr_list = (char **) buf;
 
+                *errnop = 0;
+                *h_errnop = 0;
                 return NSS_STATUS_SUCCESS;
             }
         }

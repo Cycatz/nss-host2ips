@@ -5,7 +5,7 @@
     do {                                  \
         (x) = malloc((size));             \
         if ((x) == NULL) {                \
-            perror("malloc");             \
+            perror("malloc\n");           \
             return (ret);                 \
         }                                 \
     } while (0)
@@ -16,7 +16,6 @@ static int  nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *, NSS_HOST2IPS_Hos
 
 static int  nss_host2ips_parse_host_name(char *, NSS_HOST2IPS_Host*);
 static int  nss_host2ips_parse_host_info(char *, NSS_HOST2IPS_HostInfo *);
-static int  nss_host2ips_print_host_list(NSS_HOST2IPS_HostList *);
 
 int nss_host2ips_initialize_host_list(NSS_HOST2IPS_HostList **host_list)
 {
@@ -25,7 +24,7 @@ int nss_host2ips_initialize_host_list(NSS_HOST2IPS_HostList **host_list)
     (*host_list)->host_head = NULL;
     (*host_list)->host_tail = NULL;
 
-    return 1;
+    return 0;
 }
 
 int nss_host2ips_free_host_list(NSS_HOST2IPS_HostList *host_list)
@@ -53,15 +52,6 @@ int nss_host2ips_free_host_list(NSS_HOST2IPS_HostList *host_list)
     free(host_list);
 
     return 1;
-}
-
-void nss_host2ips_parsing_test()
-{
-    NSS_HOST2IPS_HostList *host_list;
-    nss_host2ips_initialize_host_list(&host_list);
-    nss_host2ips_parse_config_file("./example1.syntax", host_list);
-    nss_host2ips_print_host_list(host_list);
-    nss_host2ips_free_host_list(host_list);
 }
 
 static int nss_host2ips_is_valid_line(char *s)
@@ -126,9 +116,9 @@ static int nss_host2ips_parse_host_info(char *info, NSS_HOST2IPS_HostInfo *host_
 
     if (s <= 0) {
         if (s == 0) {
-            fprintf(stderr, "Not in presentation format");
+            fprintf(stderr, "Not in presentation format\n");
         } else {
-            perror("inet_pton");
+            perror("inet_pton\n");
         }
         return 0;
     }
@@ -142,9 +132,9 @@ static int nss_host2ips_parse_host_info(char *info, NSS_HOST2IPS_HostInfo *host_
 
     if (s <= 0) {
         if (s == 0) {
-            fprintf(stderr, "Not in presentation format");
+            fprintf(stderr, "Not in presentation format\n");
         } else {
-            perror("inet_pton");
+            perror("inet_pton\n");
         }
         return 0;
     }
@@ -163,8 +153,8 @@ int nss_host2ips_parse_config_file(const char *path, NSS_HOST2IPS_HostList *host
 
     fp = fopen(path, "r");
     if (fp == NULL) {
-        perror("fopen");
-        return 0;
+        perror("fopen\n");
+        return 1;
     }
 
     while (fgets(line, NSS_HOST2IPS_MAX_LINE_SIZE - 1, fp)) {
@@ -183,31 +173,8 @@ int nss_host2ips_parse_config_file(const char *path, NSS_HOST2IPS_HostList *host
     }
 
     if (!nss_host2ips_add_new_host(host_list, host)) {
-        return 0;
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
-
-static int nss_host2ips_print_host_list(NSS_HOST2IPS_HostList *host_list)
-{
-    NSS_HOST2IPS_Host *host = host_list->host_head;
-    NSS_HOST2IPS_HostInfo *host_info;
-
-    while (host) {
-        printf("Host name: %s\n", host->name);
-        printf("Fallback lists:\n");
-        printf("=========================\n");
-        host_info = host->info_head;
-        while (host_info) {
-            printf("Fallback IP address: %s\n", inet_ntoa(host_info->addr));
-            printf("Adopt it when the IP address of interface %s is %s\n",
-                   host_info->if_name, inet_ntoa(host_info->if_addr));
-            host_info = host_info->info_next;
-        }
-        host = host->host_next;
-    }
-
-    return 1;
-}
-

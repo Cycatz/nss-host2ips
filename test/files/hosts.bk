@@ -1,4 +1,4 @@
-# my notebook
-host macair-archlinux.lab
+# this is a comment 
+host foo.bar
 192.168.0.3	enp4s0 192.168.0.4
 10.0.0.3 wg0 10.0.0.4
