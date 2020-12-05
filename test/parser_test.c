@@ -1,4 +1,4 @@
-#include "host2ips-parser.h"
+#include "parser.h"
 
 void list_configs(const char *config_file_name)
 {
