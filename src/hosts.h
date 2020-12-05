@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "host2ips-parser.h"
+#include "parser.h"
 
 
 // #define ALIGNED(i, t) ((i) + ((sizeof(t) - ((i) % sizeof(t))) % sizeof(t)))

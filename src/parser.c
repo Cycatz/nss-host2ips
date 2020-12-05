@@ -1,4 +1,4 @@
-#include "host2ips-parser.h"
+#include "parser.h"
 
 #define NSS_HOST2IPS_MAX_LINE_SIZE 128
 #define NSS_HOST2IPS_MALLOC(x, size, ret) \

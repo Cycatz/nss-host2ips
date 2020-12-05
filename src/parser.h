@@ -25,6 +25,7 @@ typedef struct {
     NSS_HOST2IPS_Host *host_head, *host_tail;
 } NSS_HOST2IPS_HostList;
 
+
 int nss_host2ips_free_host_list(NSS_HOST2IPS_HostList *);
 int nss_host2ips_parse_config_file(const char *, NSS_HOST2IPS_HostList *);
 int nss_host2ips_initialize_host_list(NSS_HOST2IPS_HostList **);

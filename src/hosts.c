@@ -1,4 +1,4 @@
-#include "host2ips-hosts.h"
+#include "hosts.h"
 
 static pthread_mutex_t NSS_HOST2IPS_mutex = PTHREAD_MUTEX_INITIALIZER;
 static NSS_HOST2IPS_HostList *host_list = NULL;
