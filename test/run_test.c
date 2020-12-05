@@ -19,6 +19,13 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
         list_configs(argv[2]);
+    }
+    else if (strcmp(argv[1], "library") == 0) {
+        if (argv[2] == NULL) {
+            fprintf(stderr, "Usage: %s library <hostname>\n", argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        test_nss_host2ips_gethostbyname(argv[2]);
     } else {
         fprintf(stderr, "Function %s does no exist!\n", argv[1]);
         exit(EXIT_FAILURE);
