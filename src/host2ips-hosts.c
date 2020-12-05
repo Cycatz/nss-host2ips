@@ -3,9 +3,10 @@
 static pthread_mutex_t NSS_HOST2IPS_mutex = PTHREAD_MUTEX_INITIALIZER;
 static NSS_HOST2IPS_HostList *host_list = NULL;
 
-
-static int nss_host2ips_is_rule_matched(NSS_HOST2IPS_HostInfo *, struct in_addr *);
+static int nss_host2ips_is_rule_matched(NSS_HOST2IPS_HostInfo *,
+                                        struct in_addr *);
 static int nss_host2ips_is_reachable_with_ping(struct in_addr);
+static int nss_host2ips_find_interface(char *, struct in_addr);
 
 static int nss_host2ips_is_reachable_with_ping(struct in_addr addr)
 {
@@ -19,23 +20,61 @@ static int nss_host2ips_is_reachable_with_ping(struct in_addr addr)
         return -1;
     }
 
-    snprintf(command, sizeof(command), "ping -q -c 1 -w 1 %s 2>/dev/null", addr_str);
+    snprintf(command, sizeof(command), "ping -q -c 1 -w 1 %s 2>/dev/null",
+             addr_str);
 
     if (!(in = popen(command, "r"))) {
         return -1;
     }
 
-    // must add this line to get output    
-    while (fgets(buf, sizeof(buf), in) != NULL);
+    // must add this line to get output
+    while (fgets(buf, sizeof(buf), in) != NULL)
+        ;
 
     exit_code = pclose(in);
     return exit_code;
 }
 
-static int nss_host2ips_is_rule_matched(NSS_HOST2IPS_HostInfo *host_info, struct in_addr *addr)
+static int nss_host2ips_find_interface(char *host_name,
+                                       struct in_addr host_if_addr)
+{
+    struct ifaddrs *ifaddr, *ifa;
+    struct in_addr sin_addr;
+    unsigned addr, host_addr;
+    int matched_cnt;
+
+    if (getifaddrs(&ifaddr) == -1) {
+        return 0;
+    }
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == NULL)
+            continue;
+        matched_cnt = 0;
+        if (host_name == NULL || strcasecmp(ifa->ifa_name, host_name) == 0)
+            matched_cnt++;
+
+        sin_addr = ((struct sockaddr_in *) ifa->ifa_addr)->sin_addr;
+        addr = *(unsigned *) &sin_addr;
+        host_addr = *(unsigned *) &host_if_addr;
+
+        if (host_addr == 0xffffffff || (addr == host_addr))
+            matched_cnt++;
+
+        if (matched_cnt == 2) {
+            freeifaddrs(ifaddr);
+            return 1;
+        }
+    }
+    freeifaddrs(ifaddr);
+    return 0;
+}
+
+static int nss_host2ips_is_rule_matched(NSS_HOST2IPS_HostInfo *host_info,
+                                        struct in_addr *addr)
 {
     for (; host_info != NULL; host_info = host_info->info_next) {
-        if (nss_host2ips_is_reachable_with_ping(host_info->addr) == 0) {
+        if (nss_host2ips_find_interface(host_info->if_name,
+                                        host_info->if_addr)) {
             *addr = host_info->addr;
             return 1;
         }
@@ -50,7 +89,8 @@ enum nss_status _nss_host2ips_sethostent_locked(int stayopen)
         return NSS_STATUS_UNAVAIL;
     }
 
-    if (nss_host2ips_parse_config_file(NSS_HOST2IPS_CONFIG_FILE_NAME, host_list) != 0) {
+    if (nss_host2ips_parse_config_file(NSS_HOST2IPS_CONFIG_FILE_NAME,
+                                       host_list) != 0) {
         return NSS_STATUS_UNAVAIL;
     }
 
@@ -89,7 +129,7 @@ enum nss_status _nss_host2ips_endhostent(void)
 
 
 enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
-                                               int af,  
+                                               int af,
                                                struct hostent *result_buf,
                                                char *buf,
                                                size_t buflen,
@@ -157,12 +197,13 @@ enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
 }
 
 
-enum nss_status _nss_host2ips_gethostbyname_r (const char *name,
-                                               struct hostent *ret,
-                                               char *buf,
-                                               size_t buflen,
-                                               int *errnop, 
-                                               int *h_errnop)
+enum nss_status _nss_host2ips_gethostbyname_r(const char *name,
+                                              struct hostent *ret,
+                                              char *buf,
+                                              size_t buflen,
+                                              int *errnop,
+                                              int *h_errnop)
 {
-    return _nss_host2ips_gethostbyname2_r(name, AF_UNSPEC, ret, buf, buflen, errnop, h_errnop); 
+    return _nss_host2ips_gethostbyname2_r(name, AF_UNSPEC, ret, buf, buflen,
+                                          errnop, h_errnop);
 }

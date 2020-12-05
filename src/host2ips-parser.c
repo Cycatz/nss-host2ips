@@ -10,12 +10,14 @@
         }                                 \
     } while (0)
 
-static int  nss_host2ips_is_valid_line(char *);
-static int  nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *, NSS_HOST2IPS_Host*);
-static int  nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *, NSS_HOST2IPS_HostInfo *);
+static int nss_host2ips_is_valid_line(char *);
+static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *,
+                                     NSS_HOST2IPS_Host *);
+static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *,
+                                          NSS_HOST2IPS_HostInfo *);
 
-static int  nss_host2ips_parse_host_name(char *, NSS_HOST2IPS_Host*);
-static int  nss_host2ips_parse_host_info(char *, NSS_HOST2IPS_HostInfo *);
+static int nss_host2ips_parse_host_name(char *, NSS_HOST2IPS_Host *);
+static int nss_host2ips_parse_host_info(char *, NSS_HOST2IPS_HostInfo *);
 
 int nss_host2ips_initialize_host_list(NSS_HOST2IPS_HostList **host_list)
 {
@@ -68,7 +70,8 @@ static int nss_host2ips_is_valid_line(char *s)
     return 1;
 }
 
-static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *host_list, NSS_HOST2IPS_Host *host)
+static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *host_list,
+                                     NSS_HOST2IPS_Host *host)
 {
     if (host == NULL) {
         return 0;
@@ -83,7 +86,8 @@ static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *host_list, NSS_HOST2
     return 1;
 }
 
-static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *host, NSS_HOST2IPS_HostInfo *host_info)
+static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *host,
+                                          NSS_HOST2IPS_HostInfo *host_info)
 {
     if (host_info == NULL) {
         return 0;
@@ -106,7 +110,8 @@ static int nss_host2ips_parse_host_name(char *line, NSS_HOST2IPS_Host *host)
     return 1;
 }
 
-static int nss_host2ips_parse_host_info(char *info, NSS_HOST2IPS_HostInfo *host_info)
+static int nss_host2ips_parse_host_info(char *info,
+                                        NSS_HOST2IPS_HostInfo *host_info)
 {
     int s;
     char *addr_str, *if_name, *if_addr_str;
@@ -124,10 +129,16 @@ static int nss_host2ips_parse_host_info(char *info, NSS_HOST2IPS_HostInfo *host_
     }
 
     if_name = strtok(NULL, " \t");
-    NSS_HOST2IPS_MALLOC(host_info->if_name, strlen(if_name) + 1, 0);
-    strncpy(host_info->if_name, if_name, strlen(if_name));
+    if (if_name[0] != '-') {
+        NSS_HOST2IPS_MALLOC(host_info->if_name, strlen(if_name) + 1, 0);
+        strncpy(host_info->if_name, if_name, strlen(if_name));
+    }
 
     if_addr_str = strtok(NULL, " \t");
+    if (if_name[0] == '-' || if_addr_str[0] == '-') {
+        if_addr_str = "255.255.255.255";
+    }
+
     s = inet_pton(AF_INET, if_addr_str, &(host_info->if_addr));
 
     if (s <= 0) {
@@ -143,7 +154,8 @@ static int nss_host2ips_parse_host_info(char *info, NSS_HOST2IPS_HostInfo *host_
 }
 
 
-int nss_host2ips_parse_config_file(const char *path, NSS_HOST2IPS_HostList *host_list)
+int nss_host2ips_parse_config_file(const char *path,
+                                   NSS_HOST2IPS_HostList *host_list)
 {
     FILE *fp;
     NSS_HOST2IPS_Host *host = NULL;
@@ -165,7 +177,8 @@ int nss_host2ips_parse_config_file(const char *path, NSS_HOST2IPS_HostList *host
                 NSS_HOST2IPS_MALLOC(host, sizeof(NSS_HOST2IPS_Host), 0);
                 nss_host2ips_parse_host_name(line, host);
             } else {
-                NSS_HOST2IPS_MALLOC(host_info, sizeof(NSS_HOST2IPS_HostInfo), 0);
+                NSS_HOST2IPS_MALLOC(host_info, sizeof(NSS_HOST2IPS_HostInfo),
+                                    0);
                 nss_host2ips_parse_host_info(line, host_info);
                 nss_host2ips_add_new_host_info(host, host_info);
             }

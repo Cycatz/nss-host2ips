@@ -3,6 +3,7 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
+#include <ifaddrs.h>
 #include <netdb.h>
 #include <nss.h>
 #include <pthread.h>
@@ -17,21 +18,21 @@
 // #define ALIGNED(i, t) ((i) + (sizeof(t) - 1)) & (-sizeof(t))
 //
 
-#ifndef NSS_HOST2IPS_TEST 
+#ifndef NSS_HOST2IPS_TEST
 #define NSS_HOST2IPS_CONFIG_FILE_NAME "/etc/host2ips"
-#endif 
+#endif
 
 #define NSS_HOST2IPS_ALIGN(p, t) \
-    ((char *) (((((long) (p) - 1) / sizeof(t)) + 1) * sizeof(t)))
+    ((char *) (((((long) (p) -1) / sizeof(t)) + 1) * sizeof(t)))
 #define NSS_HOST2IPS_SP(p, t, n) (NSS_HOST2IPS_ALIGN(p, t) + (n) * sizeof(t))
-#define NSS_HOST2IPS_LOCK(mutex)    \
-    do {                            \
-        pthread_mutex_lock(mutex);  \
+#define NSS_HOST2IPS_LOCK(mutex)   \
+    do {                           \
+        pthread_mutex_lock(mutex); \
     } while (0);
 
-#define NSS_HOST2IPS_UNLOCK(mutex)     \
-    do {                               \
-        pthread_mutex_unlock(mutex);   \
+#define NSS_HOST2IPS_UNLOCK(mutex)   \
+    do {                             \
+        pthread_mutex_unlock(mutex); \
     } while (0);
 
 

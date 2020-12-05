@@ -11,21 +11,32 @@ void list_configs(const char *config_file_name)
     NSS_HOST2IPS_Host *host = host_list->host_head;
     NSS_HOST2IPS_HostInfo *host_info;
 
+    char if_addr[16];
+    int idx = 0;
+
     while (host) {
         printf("Host name: %s\n", host->name);
         printf("Fallback lists:\n");
         printf("=========================\n");
         host_info = host->info_head;
         while (host_info) {
-            printf("Fallback IP address: %s\n", inet_ntoa(host_info->addr));
-            printf("Obtain it when the IP address of interface %s is %s\n",
-                   host_info->if_name, inet_ntoa(host_info->if_addr));
+            printf("%d. Fallback IP address: %s\n", ++idx,
+                   inet_ntoa(host_info->addr));
+            if (host_info->if_name != NULL) {
+                printf("Obtain it when interface %s exists",
+                       host_info->if_name);
+                strncpy(if_addr, inet_ntoa(host_info->if_addr),
+                        sizeof(if_addr));
+                if (strncmp(if_addr, "255.255.255.255", sizeof(if_addr) != 0)) {
+                    printf(" and its IP is %s", if_addr);
+                }
+                printf("\n");
+            }
             host_info = host_info->info_next;
         }
         printf("\n");
 
         host = host->host_next;
     }
-
     nss_host2ips_free_host_list(host_list);
 }

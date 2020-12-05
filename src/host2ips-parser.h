@@ -3,10 +3,10 @@
 
 #include <arpa/inet.h>
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 typedef struct NSS_HOST2IPS_HostInfo_t {
     char *if_name;
