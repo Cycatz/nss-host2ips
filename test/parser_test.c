@@ -12,13 +12,14 @@ void list_configs(const char *config_file_name)
     NSS_HOST2IPS_HostInfo *host_info;
 
     char if_addr[16];
-    int idx = 0;
+    int idx;
 
     while (host) {
         printf("Host name: %s\n", host->name);
         printf("Fallback lists:\n");
         printf("=========================\n");
         host_info = host->info_head;
+        idx = 0;
         while (host_info) {
             printf("%d. Fallback IP address: %s\n", ++idx,
                    inet_ntoa(host_info->addr));
