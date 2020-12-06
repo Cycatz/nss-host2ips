@@ -132,6 +132,8 @@ static int nss_host2ips_parse_host_info(char *info,
     if (if_name[0] != '-') {
         NSS_HOST2IPS_MALLOC(host_info->if_name, strlen(if_name) + 1, 0);
         strcpy(host_info->if_name, if_name);
+    } else {
+        host_info->if_name = NULL;
     }
 
     if_addr_str = strtok(NULL, " \t");
