@@ -105,8 +105,8 @@ static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *host,
 
 static int nss_host2ips_parse_host_name(char *line, NSS_HOST2IPS_Host *host)
 {
-    NSS_HOST2IPS_MALLOC(host->name, strlen(line) + 1 - 5, 0);
-    strncpy(host->name, line + 5, strlen(line) + 1 - 5);
+    NSS_HOST2IPS_MALLOC(host->name, strlen(line) + 1 - 5 + 1, 0);
+    strcpy(host->name, line + 5);
     return 1;
 }
 
@@ -131,7 +131,7 @@ static int nss_host2ips_parse_host_info(char *info,
     if_name = strtok(NULL, " \t");
     if (if_name[0] != '-') {
         NSS_HOST2IPS_MALLOC(host_info->if_name, strlen(if_name) + 1, 0);
-        strncpy(host_info->if_name, if_name, strlen(if_name));
+        strcpy(host_info->if_name, if_name);
     }
 
     if_addr_str = strtok(NULL, " \t");
@@ -175,6 +175,8 @@ int nss_host2ips_parse_config_file(const char *path,
             if (strncmp(line, "host", 4) == 0) {
                 nss_host2ips_add_new_host(host_list, host);
                 NSS_HOST2IPS_MALLOC(host, sizeof(NSS_HOST2IPS_Host), 0);
+                host->info_head = NULL;
+                host->info_tail = NULL;
                 nss_host2ips_parse_host_name(line, host);
             } else {
                 NSS_HOST2IPS_MALLOC(host_info, sizeof(NSS_HOST2IPS_HostInfo),
