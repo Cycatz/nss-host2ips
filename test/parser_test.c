@@ -28,7 +28,7 @@ void list_configs(const char *config_file_name)
                        host_info->if_name);
                 strncpy(if_addr, inet_ntoa(host_info->if_addr),
                         sizeof(if_addr));
-                if (strncmp(if_addr, "255.255.255.255", sizeof(if_addr) != 0)) {
+                if (strncmp(if_addr, "255.255.255.255", sizeof(if_addr)) != 0) {
                     printf(" and its IP is %s", if_addr);
                 }
                 printf("\n");
