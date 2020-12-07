@@ -50,6 +50,8 @@ host foo2.bar
   
 ** TODO
 + [ ] write test scripts  
++ [ ] support host aliases 
++ [ ] support more NSS lookup functions, e.g, ~gethostbyaddr()~
 + [ ] support putting comments after line 
 
 ** Reference
