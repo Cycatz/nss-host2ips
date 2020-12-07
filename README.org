@@ -51,6 +51,7 @@ host foo2.bar
 ** Todo
 + write test scripts  
 + support host aliases 
++ support IPv6
 + support more NSS lookup functions, e.g, ~gethostbyaddr()~
 + support putting comments after line 
 
