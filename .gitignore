@@ -1,2 +1,6 @@
 .clang-format
 .git-scripts/
+*~
+\#*\#
+.\#*
+
