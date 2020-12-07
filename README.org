@@ -48,11 +48,11 @@ host foo2.bar
   
 *warning*: don't put any trailing spaces in each line
   
-** TODO
-+ [ ] write test scripts  
-+ [ ] support host aliases 
-+ [ ] support more NSS lookup functions, e.g, ~gethostbyaddr()~
-+ [ ] support putting comments after line 
+** Todo
++ write test scripts  
++ support host aliases 
++ support more NSS lookup functions, e.g, ~gethostbyaddr()~
++ support putting comments after line 
 
 ** Reference
 + https://github.com/gmjosack/nss_http
