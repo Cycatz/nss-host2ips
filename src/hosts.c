@@ -166,7 +166,7 @@ enum nss_status _nss_host2ips_gethostbyname2_r(const char *name,
 
                     return NSS_STATUS_TRYAGAIN;
                 }
-                strncpy(buf, name, len_hostname);
+                strcpy(buf, name);
 
                 host_name = buf;
                 buf = NSS_HOST2IPS_ALIGN(buf + len_hostname + 1, addr);
