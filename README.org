@@ -1,0 +1,57 @@
+* NSS-Host2ips 
+
+** Description
+This is a [[https://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html][NSS]] module which can map a single hostname to multiple IPs.
+
+** Motivation 
+I have a laptop and a NAS in my dormitory, and I need to switch my Wireguard VPN on my laptop frequently when I go out/get back, so I have to define three different host names mapping for public/private/wireguard ip for NAS, and use it depending on where I am or whether VPN is enabled. That is so tired!
+
+Therefore, I come up with the idea that I can map a hostname to a fallback ip list, it can search through every fallback ip and check if the conditions are met, e.g, network interface.
+
+Now I can happily use a single hostname to connect to my machine without worrying about which hostname I should use! 
+
+** Installation 
+#+BEGIN_SRC sh
+make 
+sudo make install
+#+END_SRC
+
+** Configuration 
+The configuration file default is ~/etc/host2ips~
+And you have to modify ~/etc/nsswitch.conf~ to insert the module.
+
+e.g. ~/etc/nsswitch.conf~
+#+BEGIN_SRC
+hosts:      host2ips files dns
+#+END_SRC
+** Syntax 
+Sample of the config file:
+#+BEGIN_SRC
+# my host
+host foo.bar
+192.168.0.66	eth0	192.168.0.77
+10.0.0.66		wg0		10.0.0.77
+# my host2
+host foo2.bar
+192.168.1.22	eth1	192.168.1.23
+10.0.1.22		wg1     -	
+123.123.123.1	-       -  
+#+END_SRC
+
++ Comment begins with '#', currently does not support mixing comment and config    
++ To define new host, begins with 'host' and the hostname 
++ A host can have multiple fallback ips, the ip is used when all the conditions are satified
+    +  inteface name: specify the interface name
+    +  interface ip: specify the interface ip
++ '-' denotes don't-care value        
+
+** TODO
++ [ ] write test scripts  
++ [ ] support putting comments after line 
+
+** Reference
++ https://github.com/gmjosack/nss_http
++ https://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html
++ https://docs.gnunet.org/doxygen/d4/d91/nss__gns_8c.html
++ http://web.mit.edu/ghudson/sipb/pthreads/net/gethostbyname.c
+
