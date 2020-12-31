@@ -24,6 +24,8 @@ parse_test(){
 }
 library_test(){
 	echo -e "${BLUE}Running library test...${RESET}"
+
+	ret_val=0
 	for host in "${hosts_list[@]}"; do
 		echo "$host: "
 		"$TEST_BINARY" library "$host"
@@ -33,7 +35,6 @@ library_test(){
 			break; 
 		fi
 	done
-	ret_val=0
 }
 ssh_test() {
 	:
@@ -43,6 +44,8 @@ curl_test() {
 }
 getent_test() {
 	echo -e "${BLUE}Running getent test...${RESET}"
+
+	ret_val=0
 	for host in "${hosts_list[@]}"; do
 		getent hosts "$host"
 		local ret="$?"
@@ -51,10 +54,11 @@ getent_test() {
 			break; 
 		fi
 	done
-	ret_val=0
 }
 ping_test() {
 	echo -e "${BLUE}Running ping test...${RESET}"
+
+	ret_val=0
 	for host in "${hosts_list[@]}"; do
 		ping -c 1 "$host" | head -n 1 | awk '{print $2 $3}'
 		local ret="$?"
@@ -63,7 +67,6 @@ ping_test() {
 			break; 
 		fi
 	done
-	ret_val=0
 }
 
 main() {
