@@ -137,8 +137,10 @@ static int nss_host2ips_parse_host_info(char *info,
     }
 
     if_addr_str = strtok(NULL, " \t");
-    if (if_name[0] == '-' || if_addr_str[0] == '-') {
-        if_addr_str = "255.255.255.255";
+    if (host_info->if_name == NULL || if_addr_str[0] == '-') {
+        unsigned int not_used_ip = 0xffffffff;   
+        host_info->if_addr = *(struct in_addr *)&not_used_ip; 
+        return 1;
     }
 
     s = inet_pton(AF_INET, if_addr_str, &(host_info->if_addr));
