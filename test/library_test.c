@@ -69,6 +69,7 @@ static void *load_func(const char *func_name)
 
 static int test_nss_host2ips_gethostbyname(const char *host_name)
 {
+    printf("%s\n", LIB_NAME); 
     enum nss_status (*nss_host2ips_gethostbyname)(
         const char *, struct hostent *, char *, size_t, int *, int *);
     enum nss_status nss_ret;
@@ -121,7 +122,10 @@ static int test_nss_host2ips_gethostbyname(const char *host_name)
 
     free(hostbuf);
     free(tmphstbuf);
+
+    return 0;
 }
+
 
 static void close_dl_handle(void)
 {
