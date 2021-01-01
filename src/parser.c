@@ -181,6 +181,7 @@ int nss_host2ips_parse_config_file(const char *path,
                 NSS_HOST2IPS_MALLOC(host, sizeof(NSS_HOST2IPS_Host), 0);
                 host->info_head = NULL;
                 host->info_tail = NULL;
+                host->host_next = NULL;
                 nss_host2ips_parse_host_name(line, host);
             } else {
                 NSS_HOST2IPS_MALLOC(host_info, sizeof(NSS_HOST2IPS_HostInfo),
