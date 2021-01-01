@@ -129,17 +129,17 @@ static int nss_host2ips_parse_host_info(char *info,
     }
 
     if_name = strtok(NULL, " \t");
-    if (if_name[0] != '-') {
+    if (if_name == NULL || if_name[0] == '-') {
+        host_info->if_name = NULL;
+    } else {
         NSS_HOST2IPS_MALLOC(host_info->if_name, strlen(if_name) + 1, 0);
         strcpy(host_info->if_name, if_name);
-    } else {
-        host_info->if_name = NULL;
     }
 
     if_addr_str = strtok(NULL, " \t");
     if (host_info->if_name == NULL || if_addr_str[0] == '-') {
-        unsigned int not_used_ip = 0xffffffff;   
-        host_info->if_addr = *(struct in_addr *)&not_used_ip; 
+        unsigned int not_used_ip = 0xffffffff;
+        host_info->if_addr = *(struct in_addr *) &not_used_ip;
         return 1;
     }
 
