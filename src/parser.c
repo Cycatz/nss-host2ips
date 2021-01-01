@@ -11,8 +11,7 @@
     } while (0)
 
 static int nss_host2ips_is_valid_line(char *);
-static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *,
-                                     NSS_HOST2IPS_Host *);
+static NSS_HOST2IPS_Host *nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *);
 static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *,
                                           NSS_HOST2IPS_HostInfo *);
 
@@ -70,12 +69,16 @@ static int nss_host2ips_is_valid_line(char *s)
     return 1;
 }
 
-static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *host_list,
-                                     NSS_HOST2IPS_Host *host)
+static NSS_HOST2IPS_Host *nss_host2ips_add_new_host(
+    NSS_HOST2IPS_HostList *host_list)
 {
-    if (host == NULL) {
-        return 0;
-    }
+    NSS_HOST2IPS_Host *host;
+    NSS_HOST2IPS_MALLOC(host, sizeof(NSS_HOST2IPS_Host), NULL);
+
+    host->info_head = NULL;
+    host->info_tail = NULL;
+    host->host_next = NULL;
+
     if (!(host_list->host_tail)) {
         host_list->host_head = host;
     } else {
@@ -83,7 +86,7 @@ static int nss_host2ips_add_new_host(NSS_HOST2IPS_HostList *host_list,
     }
     host_list->host_tail = host;
 
-    return 1;
+    return host;
 }
 
 static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *host,
@@ -177,11 +180,10 @@ int nss_host2ips_parse_config_file(const char *path,
         if (!nss_host2ips_is_valid_line(line)) {
             line[strlen(line) - 1] = '\0';
             if (strncmp(line, "host", 4) == 0) {
-                nss_host2ips_add_new_host(host_list, host);
-                NSS_HOST2IPS_MALLOC(host, sizeof(NSS_HOST2IPS_Host), 0);
-                host->info_head = NULL;
-                host->info_tail = NULL;
-                host->host_next = NULL;
+                host = nss_host2ips_add_new_host(host_list);
+                if (host == NULL) {
+                    return 1;
+                }
                 nss_host2ips_parse_host_name(line, host);
             } else {
                 NSS_HOST2IPS_MALLOC(host_info, sizeof(NSS_HOST2IPS_HostInfo),
@@ -191,10 +193,5 @@ int nss_host2ips_parse_config_file(const char *path,
             }
         }
     }
-
-    if (!nss_host2ips_add_new_host(host_list, host)) {
-        return 1;
-    }
-
     return 0;
 }
