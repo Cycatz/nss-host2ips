@@ -108,8 +108,15 @@ static int nss_host2ips_add_new_host_info(NSS_HOST2IPS_Host *host,
 
 static int nss_host2ips_parse_host_name(char *line, NSS_HOST2IPS_Host *host)
 {
-    NSS_HOST2IPS_MALLOC(host->name, strlen(line) + 1 - 5 + 1, 0);
-    strcpy(host->name, line + 5);
+    size_t len = 0;
+    char *l = line + 5; 
+
+    while (*l != ' ' && *l != '\0') { l++; len++; }
+
+    NSS_HOST2IPS_MALLOC(host->name, len + 1, 0);
+    strncpy(host->name, line + 5, len);
+    line[len] = '\0'; 
+
     return 1;
 }
 
